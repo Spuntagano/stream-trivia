@@ -1,0 +1,108 @@
+$dark-text: #212121; //grey darken-4
+$light-text: #fff;
+$sub-light-text: #bdbdbd; //grey lighten-2
+$hover-text-color: #fff;
+$dark-background: #19171c;
+$secondary-color: #03a9f4; //light-blue
+$dark-border-color: hsla(0,0%,100%,.05);
+
+$purple: #913ccd;
+$yellow: #f7d842;
+$blue: #5481e6;
+$red: #f15f74;
+$green: #98cb4a;
+
+.choice-color-0 {
+  background-color: $red;
+
+  &.choice {
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: lighten($red, 10%);
+    }
+  }
+}
+
+.choice-color-1 {
+  background-color: $blue;
+
+  &.choice {
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: lighten($blue, 10%);
+    }
+  }
+}
+
+.choice-color-2 {
+  background-color: $yellow;
+
+  &.choice {
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: lighten($yellow, 10%);
+    }
+  }
+}
+
+.choice-color-3 {
+  background-color: $green;
+
+  &.choice {
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: lighten($green, 10%);
+    }
+  }
+}
+
+body {
+  font-family: 'Raleway', sans-serif!important;
+  font-weight: 700;
+}
+
+.box-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.button{
+  padding: 15px;
+  border: 0;
+  background-color: darken($purple, 10%);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 7px;
+  cursor: pointer;
+  font-family: inherit;
+
+  &-light{
+    background-color: $purple;
+  }
+
+  &-big{
+    font-size: 24px;
+  }
+
+  &:hover {
+    background-color: lighten($purple, 10%);
+    transition: background-color 0.2s;
+  }
+
+  &:disabled {
+    background-color: #aaa;
+  }
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}

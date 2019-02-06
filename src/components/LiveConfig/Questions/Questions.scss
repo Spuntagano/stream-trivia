@@ -1,0 +1,55 @@
+@import '../../../sass/global';
+
+.questions {
+  .question {
+    text-align: center;
+    font-weight: 700;
+    padding: 0 10% 20px 10%;
+  }
+
+  .answers-container {
+    position: absolute;
+    right: 0;
+    margin-right: 50px;
+
+    h2 {
+      font-weight: 700;
+    }
+
+    .answers {
+      position: absolute;
+      font-weight: 700;
+      background-color: darken($purple, 10%);
+      border-radius: 50%;
+      font-size: 24px;
+      width: 75px;
+      height: 75px;
+      margin-left: 23px;
+    }
+  }
+
+  .choices {
+    margin-left: 50px;
+
+    .choice-container {
+
+      .circle {
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        float: left;
+        margin-right: 10px;
+        position: relative;
+        top: 9px;
+        border: 3px solid #000;
+      }
+
+      .choice {
+        font-weight: 700;
+        float: left;
+        max-width: 500px;
+        font-size: 24px;
+      }
+    }
+  }
+}

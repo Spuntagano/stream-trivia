@@ -1,0 +1,69 @@
+@import '../../sass/global';
+
+body {
+  background-color: $purple;
+}
+
+.live-config {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: #fff;
+
+  .popout-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: $purple;
+    color: #fff;
+    z-index: 10;
+
+    h5 {
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    h6 {
+      font-weight: 700;
+      position: absolute;
+      bottom: 20px;
+      right: 10px;
+      left: 10px;
+      line-height: 1.4;
+    }
+
+    i {
+      position: absolute;
+      bottom: 5px;
+      right: 40px;
+      transform: rotate(225deg) scaleY(-1);
+    }
+  }
+
+  .top-left {
+    position: absolute;
+    left: 15px;
+  }
+
+  .top-right {
+    position: absolute;
+    right: 15px;
+  }
+
+  .main-title {
+    background-color: darken($purple,  10%);
+    padding: 15px;
+    border-bottom: 2px solid darken($purple, 20%);
+    text-align: center;
+
+    h1 {
+      margin: 0;
+      font-weight: 700;
+      display: inline-block;
+    }
+  }
+}
