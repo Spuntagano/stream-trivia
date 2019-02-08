@@ -1,13 +1,65 @@
 @import '../../../sass/global';
 
 .leaderboard {
-  h1 {
+  .winner {
     text-align: center;
-    font-weight: 700;
+
+    h1 {
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .pog-left {
+      position: relative;
+      right: 25px;
+      transform: scale(1.3);
+    }
+
+    .pog-right {
+      position: relative;
+      left: 25px;
+      transform: scale(1.3) scaleX(-1);
+    }
+  }
+
+  .emote {
+    position: absolute;
+    animation: emote-animation 3s infinite;
+    bottom: 99999px;
+
+    &-1 {
+      left: 15%;
+      animation-delay: 0s
+    }
+
+    &-2 {
+      left: 25%;
+      animation-delay: 2s
+    }
+
+    &-3 {
+      left: 35%;
+      animation-delay: 1s
+    }
+
+    &-4 {
+      left: 55%;
+      animation-delay: 0.5s
+    }
+
+    &-5 {
+      left: 75%;
+      animation-delay: 1.5s
+    }
+
+    &-6 {
+      left: 85%;
+      animation-delay: 2.5s
+    }
   }
 
   .table {
-    margin: 30px 25% 0 25%;
+    margin: 50px 25% 0 25%;
 
     table {
       th {
@@ -18,5 +70,17 @@
         font-size: 18px;
       }
     }
+  }
+}
+
+@keyframes emote-animation {
+  0% {
+    bottom: 0;
+    opacity: 100%;
+  }
+
+  100% {
+    bottom: 75%;
+    opacity: 0;
   }
 }

@@ -2,7 +2,8 @@ import * as React from 'react';
 import './New.scss';
 
 type Props = {
-    onNew: () => () => void;
+    onNew: () => () => void,
+    onHowToPlay: () => () => void
 };
 
 export default class New extends React.Component {
@@ -13,7 +14,7 @@ export default class New extends React.Component {
     }
 
     render() {
-        const {onNew} = this.props;
+        const {onNew, onHowToPlay} = this.props;
 
         return (
             <div className="new">
@@ -21,7 +22,12 @@ export default class New extends React.Component {
                     <h1>Stream trivia</h1>
                 </div>
                 <div className="box-center center">
-                    <button className="button button-big" onClick={onNew()}>New game</button>
+                    <div className="button-container">
+                        <button className="button button-big" onClick={onNew()}>New game</button>
+                    </div>
+                    <div className="button-container">
+                        <button className="button button-big" onClick={onHowToPlay()}>How to play</button>
+                    </div>
                 </div>
             </div>
         )

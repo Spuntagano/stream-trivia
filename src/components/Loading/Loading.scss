@@ -5,6 +5,10 @@
   right: 0;
   bottom: 0;
 
+  .spinner-white, .spinner-white-only{
+    border-color: #fff;
+  }
+
   .loading-sign {
     position: absolute;
     top: 50%;

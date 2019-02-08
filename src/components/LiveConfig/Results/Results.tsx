@@ -32,7 +32,7 @@ export default class Results extends React.Component {
             return <div key={`choice-${index}`} className="choice-container clearfix">
                 <div className={`circle choice-color-${index}`} />
                 <h6 className={`choice ${(index === correctAnswerPosition) ? 'right-choice' : ''}`}>
-                    {atob(choice)}
+                    {decodeURIComponent(choice)}
                 </h6>
                 <div className="check">{index === correctAnswerPosition && <i className="material-icons small">check</i>}</div>
                 <h5 className="num">({answers[index]})</h5>
@@ -68,14 +68,23 @@ export default class Results extends React.Component {
     }
 
     getPieChartData() {
+        const {currentQuestion, questions} = this.props;
+
         const choices = this.getChoices();
         const answers = this.getAnswers();
-        const color = [
+        let color = [
             '#f15f74',
             '#5481e6',
             '#f7d842',
             '#98cb4a'
         ];
+
+        if (questions[currentQuestion].type === 'boolean') {
+            color = [
+                '#98cb4a',
+                '#f7d842'
+            ];
+        }
 
         let noResults = true;
         Object.keys(answers).forEach((key) => {
@@ -93,7 +102,7 @@ export default class Results extends React.Component {
 
         return choices.map((question, index) => {
             return {
-                title: atob(question),
+                title: decodeURIComponent(question),
                 value: answers[index],
                 color: color[index]
             }
@@ -110,7 +119,7 @@ export default class Results extends React.Component {
                     <h1>Results</h1>
                     <button className="button button-light top-right" onClick={onLeaderboard()}>Next</button>
                 </div>
-                <h1 className="question">{atob(questions[currentQuestion].question)}</h1>
+                <h1 className="question">{decodeURIComponent(questions[currentQuestion].question)}</h1>
                 <div className="pie-chart-container">
                     <div className="pie-chart">
                         <PieChart

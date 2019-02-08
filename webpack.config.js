@@ -17,6 +17,11 @@ module.exports = (_env, argv) => {
       path: ["./src/LiveConfig.tsx", "materialize-loader!./materialize.config.js"],
       outputHtml: "live_config.html",
       build: true
+    },
+    Config: {
+      path: ["./src/Config.tsx", "materialize-loader!./materialize.config.js"],
+      outputHtml: "config.html",
+      build: true
     }
   };
 

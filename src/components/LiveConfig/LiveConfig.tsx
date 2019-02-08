@@ -11,6 +11,8 @@ import Options from './Options/Options';
 import Wait from './Wait/Wait';
 import New from './New/New';
 import Join from './Join/Join';
+import Loading from '../Loading/Loading';
+import HowToPlay from './HowToPlay/HowToPlay';
 import Questions from './Questions/Questions';
 import Leaderboard from './Leaderboard/Leaderboard';
 import configs from '../../../configs';
@@ -36,6 +38,8 @@ type State = {
     products: Array<Product>,
     popout: boolean,
     fullscreen: boolean,
+    loading: boolean,
+    music: boolean,
     currentTimestamp: number,
     lastStateChangeTimestamp: number
 }
@@ -60,6 +64,8 @@ const defaultState: State = {
     products: [],
     popout: true,
     fullscreen: true,
+    loading: true,
+    music: false,
     currentTimestamp: null,
     lastStateChangeTimestamp: null
 };
@@ -73,6 +79,8 @@ export default class LiveConfig extends React.Component {
     public configs: Configs;
     public websocket: WebSocket;
     public timer: any;
+    public stateTimeouts: any;
+    public music: any;
 
     public onStateChange: (property: string) => (e: ChangeEvent<HTMLInputElement>|ChangeEvent<HTMLSelectElement>) => void;
     public onUseBitsChange: () => () => void;
@@ -82,9 +90,11 @@ export default class LiveConfig extends React.Component {
     public onNextQuestion: () => () => void;
     public onEnd: () => () => void;
     public onSkip: () => () => void;
-    public onGetUsernames: (ids: Array<string>) => void;
     public onResizeHandler: () => () => void;
     public onPopoutHandler: () => () => void;
+    public onHowToPlay: () => () => void;
+    public onGetTop: () => () => Array<string>;
+    public onToggleMusic: () => () => void;
 
     constructor(props: Props) {
         super(props);
@@ -99,6 +109,8 @@ export default class LiveConfig extends React.Component {
         this.toast = new Toast();
         this.timer = null;
         this.state = defaultState;
+        this.stateTimeouts = [];
+        this.music = new Audio(`${this.configs.cdnURL}/assets/sounds/music.mp3`);
 
         this.onStateChange = (property: string) => (e: ChangeEvent<HTMLInputElement>|ChangeEvent<HTMLSelectElement>) => this.stateChange(e, property);
         this.onUseBitsChange = () => () => this.useBitsChange();
@@ -108,14 +120,18 @@ export default class LiveConfig extends React.Component {
         this.onNextQuestion = () => () => this.nextQuestion();
         this.onEnd = () => () => this.end();
         this.onSkip = () => () => this.skip();
-        this.onGetUsernames = (ids: Array<string>) => this.getUsernames(ids);
         this.onResizeHandler = () => () => this.resizeHandler();
         this.onPopoutHandler = () => () => this.popoutHandler();
-
-        this.twitch.bits.onTransactionComplete(this.transactionComplete.bind(this));
+        this.onHowToPlay = () => () => this.howToPlay();
+        this.onGetTop = () => () => this.getTop();
+        this.onToggleMusic = () => () => this.toggleMusic();
     }
 
     async componentDidMount() {
+        setTimeout(() => {
+            location.reload();
+        }, 60*60*1000);
+
         if (this.twitch) {
             this.twitch.onAuthorized(async (auth: Auth) => {
                 this.authentication.setToken(auth.token, auth.userId, auth.channelId, auth.clientId);
@@ -140,10 +156,19 @@ export default class LiveConfig extends React.Component {
                     }
 
                     this.setState(() => {
-                        return state;
+                        return {
+                            ...state,
+                            loading: false
+                        };
                     });
 
                 } catch (e) {
+                    this.setState(() => {
+                        return {
+                            loading: false,
+                        }
+                    });
+
                     this.toast.show({
                         html: '<i class="material-icons">error_outline</i>Error while fetching game state',
                         classes: 'error'
@@ -181,14 +206,6 @@ export default class LiveConfig extends React.Component {
     componentWillUnmount() {
         clearInterval(this.timer);
         window.removeEventListener('resize', this.onResizeHandler());
-    }
-
-    async transactionComplete(transaction: Transaction) {
-        if (this.state.useBits && transaction.product.cost.amount === this.state.bitsAmount) {
-            await this.authentication.makeCall(`${this.configs.relayURL}/join`, 'POST', {
-                userId: transaction.userId
-            });
-        }
     }
 
     popoutHandler() {
@@ -249,11 +266,11 @@ export default class LiveConfig extends React.Component {
             category: this.state.category,
             difficulty: this.state.difficulty,
             type: this.state.type,
-            encode: 'base64'
+            encode: 'url3986'
         };
 
         let paramsString = Object.keys(params).map((key) => {
-            if (params[key]) {
+                if (params[key]) {
                     return `${key}=${params[key]}`
                 }
             }
@@ -261,8 +278,14 @@ export default class LiveConfig extends React.Component {
             return !!params;
         }).join('&');
 
+        this.setState(() => {
+            return {
+                loading: true,
+            }
+        });
+
         try {
-            let responseStream:any = await this.authentication.makePublicCall(`https://opentdb.com/api.php?${paramsString}`);
+            let responseStream: any = await this.authentication.makePublicCall(`https://opentdb.com/api.php?${paramsString}`);
             let response = await responseStream.json();
 
             if (response.response_code !== 0) {
@@ -273,6 +296,12 @@ export default class LiveConfig extends React.Component {
                     4: 'Token empty'
                 };
 
+                this.setState(() => {
+                    return {
+                        loading: false,
+                    }
+                });
+
                 this.toast.show({
                     html: `<i class="material-icons">error_outline</i>${code[response.response_code]}`,
                     classes: 'error'
@@ -281,14 +310,25 @@ export default class LiveConfig extends React.Component {
                 let newState = {
                     ...this.state,
                     gameState: 'join',
-                    questions: response.results
+                    questions: response.results,
+                    loading: false
                 };
 
                 if (JSON.stringify(newState).length <= 5120) {
+                    this.stateTimeouts.forEach((timeout: any) => {
+                       clearTimeout(timeout);
+                    });
+
                     this.changeState(newState);
                 }
             }
         } catch (e) {
+            this.setState(() => {
+                return {
+                    loading: false,
+                }
+            });
+
             this.toast.show({
                 html: '<i class="material-icons">error_outline</i>Error while fetching questions',
                 classes: 'error'
@@ -296,16 +336,54 @@ export default class LiveConfig extends React.Component {
         }
     }
 
+
     new() {
         this.changeState({
             gameState: 'options'
         });
     }
 
-    leaderboard() {
+    howToPlay() {
         this.changeState({
-            gameState: 'leaderboard'
+            gameState: 'howToPlay'
         });
+    }
+
+    async leaderboard() {
+        this.setState(() => {
+            return {
+                loading: true,
+            }
+        });
+
+        try {
+            let usersStream: any = await this.authentication.makeCall(`${this.configs.relayURL}/users?id=${this.getTop().join(',')}`);
+            let users = await usersStream.json();
+
+            let newParticipants = Object.assign({}, this.state.participants);
+            users.forEach((user: any) => {
+                if (newParticipants[user.id]) {
+                    newParticipants[user.id].name = user.display_name
+                }
+            });
+
+            this.changeState({
+                gameState: 'leaderboard',
+                participants: newParticipants,
+                loading: false
+            });
+        } catch (e) {
+            this.setState(() => {
+                return {
+                    loading: false,
+                }
+            });
+
+            this.toast.show({
+                html: '<i class="material-icons">error_outline</i>Error while fetching participants names',
+                classes: 'error'
+            });
+        }
     }
 
     nextQuestion() {
@@ -335,7 +413,12 @@ export default class LiveConfig extends React.Component {
         this.changeState({
             ...defaultState,
             categories: this.state.categories,
-            participants: {}
+            participants: {},
+            loading: false,
+            popout: true,
+            streamDelay: this.state.streamDelay,
+            fullscreen: true,
+            music: this.state.music
         });
     }
 
@@ -430,10 +513,12 @@ export default class LiveConfig extends React.Component {
             return state;
         });
 
-        setTimeout(() => {
+        this.stateTimeouts.push(setTimeout(() => {
             let newState = Object.assign({}, state);
             delete newState.popout;
             delete newState.fullscreen;
+            delete newState.loading;
+            delete newState.music;
 
             try {
                 let participants: Participants = null;
@@ -466,7 +551,7 @@ export default class LiveConfig extends React.Component {
                     classes: 'error'
                 });
             }
-        }, this.state.streamDelay*1000);
+        }, this.state.streamDelay*1000));
     }
 
     connect() {
@@ -494,7 +579,6 @@ export default class LiveConfig extends React.Component {
             let message = JSON.parse(evt.data);
 
             if (message.action === 'JOIN') {
-                if (this.state.useBits) return;
                 if (!message.name) return;
 
                 this.setState((prevState: State) => {
@@ -527,47 +611,54 @@ export default class LiveConfig extends React.Component {
         }
     }
 
-    async getUsernames(ids: Array<string>) {
-        try {
-            let usersStream: any = await this.authentication.makeCall(`${this.configs.relayURL}/users?id=${ids.join(',')}`);
-            let users = await usersStream.json();
+    getTop() {
+        return Object.keys(this.state.participants).sort((a: any, b: any) => {
+            return this.state.participants[b].score - this.state.participants[a].score;
+        }).slice(0, 10);
+    }
 
-            this.setState((prevState :State) => {
-                let newParticipants = Object.assign({}, prevState.participants);
-                users.forEach((user: any) => {
-                    if (newParticipants[user.id]) {
-                        newParticipants[user.id].name = user.display_name
-                    }
-                });
-
-                return {
-                    participants: newParticipants
-                }
-            });
-        } catch (e) {
-            this.toast.show({
-                html: '<i class="material-icons">error_outline</i>Error while fetching participants names',
-                classes: 'error'
-            });
+    toggleMusic() {
+        if (this.state.music) {
+            this.music.pause();
+        } else {
+            this.music.play();
         }
+
+        this.setState((prevState: State) => {
+            return {
+                music: !prevState.music
+            }
+        })
     }
 
     render() {
         return (
             <div className="live-config">
-                <div>
-                    {!this.state.popout && <div className="popout-overlay">
-                        <h5 className="box-center">Stream Requests</h5>
+                {this.state.loading && <div className="loading-overlay">
+                    <Loading />
+                </div>}
+                {!this.state.popout && <div className="popout-overlay">
+                    <div className="popout">
+                        <img src={`${this.configs.cdnURL}/assets/images/logo.png`} />
+                        <h5>Stream Trivia</h5>
                         <h6>Popout the the extension in order to continue</h6>
-                        <i className="material-icons">undo</i>
-                    </div>}
-                    {this.state.popout && !this.state.fullscreen && <div className="popout-overlay">
-                      <h5 className="box-center">Stream Requests</h5>
-                      <h6>Fullscreen the window in order to continue</h6>
-                    </div>}
-                </div>
-                {this.state.popout && this.state.fullscreen && <div>
-                    {this.state.gameState === 'new' && <New onNew={this.onNew} />}
+                    </div>
+                    <i className="material-icons">undo</i>
+                </div>}
+                {this.state.popout && !this.state.fullscreen && <div className="popout-overlay">
+                  <div className="popout">
+                    <img src={`${this.configs.cdnURL}/assets/images/logo.png`} />
+                    <h5>Stream Trivia</h5>
+                    <h6>Fullscreen the window in order to continue</h6>
+                  </div>
+                </div>}
+                {this.state.popout && this.state.fullscreen && <div className="music-control" onClick={this.onToggleMusic()}>
+                    {!this.state.music && <i className="material-icons small">music_note</i>}
+                    {this.state.music && <i className="material-icons small">music_off</i>}
+                </div>}
+                {this.state.popout && this.state.fullscreen && !this.state.loading && <div>
+                    {this.state.gameState === 'new' && <New onNew={this.onNew} onHowToPlay={this.onHowToPlay} />}
+                    {this.state.gameState === 'howToPlay' && <HowToPlay onEnd={this.onEnd} />}
                     {this.state.gameState === 'options' && <Options
                         categories={this.state.categories}
                         numberQuestions={this.state.numberQuestions}
@@ -590,6 +681,8 @@ export default class LiveConfig extends React.Component {
                         <Wait
                           currentTimestamp={this.state.currentTimestamp}
                           lastStateChangeTimestamp={this.state.lastStateChangeTimestamp}
+                          questions={this.state.questions}
+                          currentQuestion={this.state.currentQuestion}
                           onSkip={this.onSkip}
                           onEnd={this.onEnd}
                         />
@@ -622,7 +715,8 @@ export default class LiveConfig extends React.Component {
                       onEnd={this.onEnd}
                       correctAnswerPosition={this.state.correctAnswerPosition}
                       questions={this.state.questions}
-                      getUsernames={this.onGetUsernames}
+                      onGetTop={this.onGetTop}
+                      configs={this.configs}
                     />}
                 </div>}
             </div>

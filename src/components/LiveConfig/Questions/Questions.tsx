@@ -48,7 +48,7 @@ export default class Questions extends React.Component {
             return <div key={`choice-${index}`} className="choice-container clearfix">
                 <div className={`circle choice-color-${index}`} />
                 <h6 className="choice">
-                    {atob(choice)}
+                    {decodeURIComponent(choice)}
                 </h6>
             </div>
         });
@@ -61,10 +61,10 @@ export default class Questions extends React.Component {
             <div className="questions">
                 <div className="main-title">
                     {<button className="button top-left" onClick={onEnd()}>End Trivia</button>}
-                    <h1>Question</h1>
+                    <h1>Question ({currentQuestion+1}/{questions.length})</h1>
                     {<button className="button button-light top-right" onClick={onSkip()}>Skip</button>}
                 </div>
-                <h1 className="question">{atob(questions[currentQuestion].question)}</h1>
+                <h1 className="question">{decodeURIComponent(questions[currentQuestion].question)}</h1>
                 <div className="answers-container">
                     <h2>Answers</h2>
                     <div className="answers">

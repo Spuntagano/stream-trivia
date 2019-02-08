@@ -89,7 +89,7 @@ export default class Options extends React.Component {
         return (
             <div className="options">
                 <div className="main-title">
-                    <button className="button top-left" onClick={onEnd()}>End trivia</button>
+                    <button className="button top-left" onClick={onEnd()}>Cancel</button>
                     <h1>Create game</h1>
                 </div>
                 <form onSubmit={onCreate()}>

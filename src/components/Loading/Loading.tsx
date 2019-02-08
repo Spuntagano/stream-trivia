@@ -11,7 +11,7 @@ export default class PanelPage extends React.Component {
             <div className="loading">
                 <div className="loading-sign">
                     <div className="preloader-wrapper big active">
-                        <div className="spinner-layer spinner-blue-only">
+                        <div className="spinner-layer spinner-white-only">
                             <div className="circle-clipper left">
                                 <div className="circle" />
                             </div>

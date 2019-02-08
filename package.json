@@ -1,5 +1,5 @@
 {
-  "name": "stream-requests",
+  "name": "stream-trivia",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
@@ -7,7 +7,9 @@
     "test": "jest",
     "build": "webpack --mode production",
     "start": "UV_THREADPOOL_SIZE=100 && webpack-dev-server --mode development --devrig",
-    "cert": "./bin/generate_cert.sh server"
+    "cert": "./bin/generate_cert.sh server",
+    "deploy-assets-staging": "webpack --mode production && node ./bin/deploy-assets",
+    "deploy-assets-production": "webpack --mode production && node ./bin/deploy-assets --production"
   },
   "keywords": [],
   "author": "",

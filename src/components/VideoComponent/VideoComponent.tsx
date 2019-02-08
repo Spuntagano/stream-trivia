@@ -15,6 +15,7 @@ import Questions from './Questions/Questions';
 import Results from './Results/Results';
 import Leaderboard from './Leaderboard/Leaderboard';
 import Toast from '../../lib/Toast/Toast';
+import Transaction from '../../types/Transaction';
 
 type State = {
     numberQuestions: number,
@@ -81,9 +82,15 @@ export default class VideoComponent extends React.Component {
             currentTimestamp: null,
             lastStateChangeTimestamp: null
         };
+
+        this.twitch.bits.onTransactionComplete(this.transactionComplete.bind(this));
     }
 
     componentDidMount() {
+        setTimeout(() => {
+            location.reload();
+        }, 60*60*1000);
+
         if (this.twitch) {
             this.twitch.onAuthorized(async (auth: Auth) => {
                 this.authentication.setToken(auth.token, auth.userId, auth.channelId, auth.clientId);
@@ -183,6 +190,26 @@ export default class VideoComponent extends React.Component {
 
         if (this.twitch) {
             this.twitch.unlisten('broadcast');
+        }
+    }
+
+    async transactionComplete(transaction: Transaction) {
+        try {
+            await this.authentication.makeCall(`${this.configs.relayURL}/join`, 'POST', {
+                transaction: transaction
+            });
+
+            this.setState((prevState: State) => {
+                let newParticipants: Participants = Object.assign({}, prevState.participants);
+                newParticipants[this.authentication.getUserId()] = {score: 0, answer: null, answerTimestamp: 0};
+
+                return {participants: newParticipants};
+            });
+        } catch (e) {
+            this.toast.show({
+                html: '<i class="material-icons">error_outline</i>Error while joining',
+                classes: 'error'
+            });
         }
     }
 
@@ -331,13 +358,20 @@ export default class VideoComponent extends React.Component {
                     currentTimestamp={this.state.currentTimestamp}
                     lastStateChangeTimestamp={this.state.lastStateChangeTimestamp}
                     questionsTime={this.state.questionsTime}
+                    configs={this.configs}
                 />}
                 {this.state.gameState === 'results' && this.state.participants[this.authentication.getUserId()] && <Results
                   participants={this.state.participants}
                   userId={this.authentication.getUserId()}
                   correctAnswerPosition={this.state.correctAnswerPosition}
+                  configs={this.configs}
                 />}
-                {this.state.gameState === 'leaderboard' && this.state.participants[this.authentication.getUserId()] && <Leaderboard participants={this.state.participants} userId={this.authentication.getUserId()} />}
+                {this.state.gameState === 'leaderboard' && this.state.participants[this.authentication.getUserId()] && <Leaderboard
+                  participants={this.state.participants}
+                  userId={this.authentication.getUserId()}
+                  currentQuestion={this.state.currentQuestion}
+                  numberQuestions={this.state.numberQuestions}
+                />}
             </div>
         )
     }

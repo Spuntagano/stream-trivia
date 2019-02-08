@@ -12,6 +12,22 @@ body {
   right: 0;
   color: #fff;
 
+  .music-control {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    cursor: pointer;
+
+    i{
+      transition: color 0.2s;
+      color: darken($purple, 20%);
+
+      &:hover {
+        color: darken($purple, 10%);
+      }
+    }
+  }
+
   .popout-overlay {
     position: absolute;
     top: 0;
@@ -22,18 +38,18 @@ body {
     color: #fff;
     z-index: 10;
 
-    h5 {
-      font-weight: 700;
-      font-size: 18px;
-    }
+    .popout {
+      margin-top: 50px;
+      text-align: center;
 
-    h6 {
-      font-weight: 700;
-      position: absolute;
-      bottom: 20px;
-      right: 10px;
-      left: 10px;
-      line-height: 1.4;
+      h5{
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+
+      h6 {
+        font-weight: 700;
+      }
     }
 
     i {

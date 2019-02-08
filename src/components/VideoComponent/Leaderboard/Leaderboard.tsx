@@ -4,7 +4,9 @@ import Participants from '../../../types/Participants';
 
 type Props = {
     participants: Participants,
-    userId: string
+    userId: string,
+    currentQuestion: number,
+    numberQuestions: number
 };
 
 export default class Leaderboard extends React.Component {
@@ -33,14 +35,15 @@ export default class Leaderboard extends React.Component {
     }
 
     render() {
-        const {participants, userId} = this.props;
+        const {participants, userId, currentQuestion, numberQuestions} = this.props;
 
         let position = this.getPosition();
 
         return (
             <div className="leaderboard">
                 <h6>{participants[userId].score} points</h6>
-                <h6>You are {position}{this.ordinal(position)} out of {Object.keys(participants).length}</h6>
+                {currentQuestion+1 < numberQuestions && <h6>You are {position}{this.ordinal(position)} out of {Object.keys(participants).length}</h6>}
+                {currentQuestion+1 >= numberQuestions && <h6>You finished {position}{this.ordinal(position)} out of {Object.keys(participants).length}</h6>}
             </div>
         )
     }

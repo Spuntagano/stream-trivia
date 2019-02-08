@@ -1,7 +1,7 @@
 {
   "accessKeyId": "",
   "secretAccessKey": "",
-  "bucketName": "stream-requests-notifier",
-  "bucketNameStaging": "stream-requests-notifier-staging",
+  "bucketName": "stream-trivia-assets",
+  "bucketNameStaging": "stream-trivia-assets-staging",
   "endpoint": "s3.us-west-2.amazonaws.com"
 }
