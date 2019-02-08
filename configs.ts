@@ -15,8 +15,8 @@ const configs:any = {
         cdnURL: 'https://s3-us-west-2.amazonaws.com/stream-trivia-assets-staging'
     },
     released: {
-        relayURL: 'https://stream-requests.com',
-        wsURL: 'wss://stream-requests.com:3004',
+        relayURL: 'https://trivia.stream-requests.com',
+        wsURL: 'wss://trivia.stream-requests.com:3004',
         cdnURL: 'https://s3-us-west-2.amazonaws.com/stream-trivia-assets'
     }
 };
