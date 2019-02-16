@@ -361,38 +361,9 @@ export default class LiveConfig extends React.Component {
     async leaderboard() {
         this.setState(() => {
             return {
-                loading: true,
+                gameState: 'leaderboard',
             }
         });
-
-        try {
-            let usersStream: any = await this.authentication.makeCall(`${this.configs.relayURL}/users?id=${this.getTop().join(',')}`);
-            let users = await usersStream.json();
-
-            let newParticipants = Object.assign({}, this.state.participants);
-            users.forEach((user: any) => {
-                if (newParticipants[user.id]) {
-                    newParticipants[user.id].name = user.display_name
-                }
-            });
-
-            this.changeState({
-                gameState: 'leaderboard',
-                participants: newParticipants,
-                loading: false
-            });
-        } catch (e) {
-            this.setState(() => {
-                return {
-                    loading: false,
-                }
-            });
-
-            this.toast.show({
-                html: '<i class="material-icons">error_outline</i>Error while fetching participants names',
-                classes: 'error'
-            });
-        }
     }
 
     nextQuestion() {
@@ -503,11 +474,36 @@ export default class LiveConfig extends React.Component {
             if (this.state.currentTimestamp >= this.state.lastStateChangeTimestamp + this.state.questionsTime*1000) {
                 clearInterval(this.timer);
 
-                setTimeout(() => {
-                    this.changeState({
-                        participants: this.calculateScores(this.state),
-                        gameState: 'results'
+                setTimeout(async () => {
+                    this.setState(() => {
+                        return {
+                            loading: true,
+                        }
                     });
+
+                    let newParticipants = this.calculateScores(this.state);
+                    try {
+                        let usersStream: any = await this.authentication.makeCall(`${this.configs.relayURL}/users?id=${this.getTop(newParticipants).join(',')}`);
+                        let users = await usersStream.json();
+
+                        users.forEach((user: any) => {
+                            if (newParticipants[user.id]) {
+                                newParticipants[user.id].name = user.display_name
+                            }
+                        });
+                    } catch (e) {
+                        this.toast.show({
+                            html: '<i class="material-icons">error_outline</i>Error while fetching participants names',
+                            classes: 'error'
+                        });
+                    }
+
+                    this.changeState({
+                        participants: newParticipants,
+                        gameState: 'results',
+                        loading: false
+                    });
+
                 }, this.state.streamDelay*1000);
             } else {
                 this.setState((prevState: State) => {
@@ -616,9 +612,9 @@ export default class LiveConfig extends React.Component {
         }
     }
 
-    getTop() {
-        return Object.keys(this.state.participants).sort((a: any, b: any) => {
-            return this.state.participants[b].score - this.state.participants[a].score;
+    getTop(participants: Participants = this.state.participants) {
+        return Object.keys(participants).sort((a: any, b: any) => {
+            return participants[b].score - participants[a].score;
         }).slice(0, 10);
     }
 
