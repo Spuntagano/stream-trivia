@@ -545,7 +545,7 @@ export default class LiveConfig extends React.Component {
                     let p: Participants = {};
                     Object.keys(participants).forEach((key) => {
                         p[key] = participants[key];
-                        if (Object.keys(p).length > 30) {
+                        if (Object.keys(p).length > 40) {
                             this.authentication.makeCall(`${this.configs.relayURL}/state`, 'POST', {participants: p});
                             this.twitch.send('broadcast', 'application/json', {participants: p});
 
