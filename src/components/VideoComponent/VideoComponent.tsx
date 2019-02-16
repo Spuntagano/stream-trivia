@@ -231,7 +231,7 @@ export default class VideoComponent extends React.Component {
 
                     let sku = '';
                     products.forEach((product) => {
-                        if (this.state.bitsAmount === product.cost.amount) {
+                        if (this.state.bitsAmount == product.cost.amount) {
                             sku = product.sku;
                         }
                     });
