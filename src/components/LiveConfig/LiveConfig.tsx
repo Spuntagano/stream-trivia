@@ -323,6 +323,12 @@ export default class LiveConfig extends React.Component {
                     });
 
                     this.changeState(newState);
+                } else {
+                    this.setState(() => {
+                        return {
+                            loading: false,
+                        }
+                    });
                 }
             }
         } catch (e) {

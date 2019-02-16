@@ -38,7 +38,7 @@ export default class Select extends React.Component {
         const {options} = this.props;
 
         return options.map((option: Option) => {
-            return <option key={option.value} value={option.value}>{option.text}</option>
+            return <option key={`${option.value}-${option.text}`} value={option.value}>{option.text}</option>
         });
     }
 

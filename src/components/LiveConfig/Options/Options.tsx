@@ -76,7 +76,7 @@ export default class Options extends React.Component {
         return products.map((product) => {
             return {
                 value: product.cost.amount,
-                text: `${product.cost.amount} ${product.cost.type}`
+                text: `${product.cost.amount} ${product.cost.type} ${(product.inDevelopment) ? 'test' : ''}`
             }
         }).sort((a:any, b:any) => {
             return (parseInt(a.value, 10) - parseInt(b.value, 10));
