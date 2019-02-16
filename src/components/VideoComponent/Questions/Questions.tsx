@@ -30,7 +30,7 @@ export default class Questions extends React.Component {
     }
 
     componentDidMount() {
-        this.quoteRandom = Math.floor(Math.random()*7);
+        this.quoteRandom = Math.floor(Math.random()*5);
         this.imageRandom = Math.floor(Math.random()*2);
     }
 
@@ -73,7 +73,7 @@ export default class Questions extends React.Component {
                 <img src={`${configs.cdnURL}/assets/images/${images[this.imageRandom]}`} />
             </div>,
             <div>
-                <h6 className="sure">The faster you answer, the more point you get!</h6>
+                <h6 className="sure">The faster you answer, the more points you get!</h6>
             </div>,
             <div>
                 <h6 className="sure">I saw you Googling</h6>
@@ -84,13 +84,7 @@ export default class Questions extends React.Component {
                 <img src={`${configs.cdnURL}/assets/images/${images[this.imageRandom]}`} />
             </div>,
             <div>
-                <h6 className="sure">Maybe you should go back to school</h6>
-            </div>,
-            <div>
                 <h6 className="sure">In case of doubt, just answer C</h6>
-            </div>,
-            <div>
-                <h6 className="sure">This one was eazy</h6>
             </div>
         ];
 

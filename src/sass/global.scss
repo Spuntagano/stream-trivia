@@ -13,30 +13,18 @@ $red: #f15f74;
 $green: #98cb4a;
 
 .choice-color-0 {
-  background-color: $yellow;
+  background-color: $red;
 
   &.choice {
     transition: background-color 0.2s;
 
     &:hover {
-      background-color: lighten($yellow, 10%);
+      background-color: lighten($red, 10%);
     }
   }
 }
 
 .choice-color-1 {
-  background-color: $green;
-
-  &.choice {
-    transition: background-color 0.2s;
-
-    &:hover {
-      background-color: lighten($green, 10%);
-    }
-  }
-}
-
-.choice-color-2 {
   background-color: $blue;
 
   &.choice {
@@ -48,14 +36,26 @@ $green: #98cb4a;
   }
 }
 
-.choice-color-3 {
-  background-color: $red;
+.choice-color-2 {
+  background-color: $yellow;
 
   &.choice {
     transition: background-color 0.2s;
 
     &:hover {
-      background-color: lighten($red, 10%);
+      background-color: lighten($yellow, 10%);
+    }
+  }
+}
+
+.choice-color-3 {
+  background-color: $green;
+
+  &.choice {
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: lighten($green, 10%);
     }
   }
 }

@@ -1,5 +1,4 @@
 import * as React from 'react'
-import Transaction from '../../types/Transaction';
 import './LiveConfig.scss';
 import Auth from '../../types/Auth';
 import Participants from '../../types/Participants';
@@ -111,6 +110,10 @@ export default class LiveConfig extends React.Component {
         this.state = defaultState;
         this.stateTimeouts = [];
         this.music = new Audio(`${this.configs.cdnURL}/assets/sounds/music.mp3`);
+        this.music.addEventListener('ended', function() {
+            this.currentTime = 0;
+            this.play();
+        }, false);
 
         this.onStateChange = (property: string) => (e: ChangeEvent<HTMLInputElement>|ChangeEvent<HTMLSelectElement>) => this.stateChange(e, property);
         this.onUseBitsChange = () => () => this.useBitsChange();
@@ -410,6 +413,8 @@ export default class LiveConfig extends React.Component {
     }
 
     end() {
+        clearInterval(this.timer);
+
         this.changeState({
             ...defaultState,
             categories: this.state.categories,
@@ -579,8 +584,6 @@ export default class LiveConfig extends React.Component {
             let message = JSON.parse(evt.data);
 
             if (message.action === 'JOIN') {
-                if (!message.name) return;
-
                 this.setState((prevState: State) => {
                     let newParticipants = Object.assign({}, prevState.participants);
                     newParticipants[message.name] = {score: 0, answer: null, answerTimestamp: 0};
@@ -592,10 +595,6 @@ export default class LiveConfig extends React.Component {
             }
 
             if (message.action === 'ANSWER') {
-                if (this.state.gameState !== 'questions') return;
-                if (!this.state.participants[message.name]) return;
-                if (this.state.participants[message.name].answer !== null) return;
-
                 this.setState((prevState: State) => {
                     let newParticipants = Object.assign({}, prevState.participants);
                     newParticipants[message.name].answer = message.answer;

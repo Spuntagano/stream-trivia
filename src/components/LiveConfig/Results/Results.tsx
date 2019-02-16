@@ -81,8 +81,8 @@ export default class Results extends React.Component {
 
         if (questions[currentQuestion].type === 'boolean') {
             color = [
-                '#98cb4a',
-                '#f7d842'
+                '#f15f74',
+                '#5481e6'
             ];
         }
 
