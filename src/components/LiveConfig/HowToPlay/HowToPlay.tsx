@@ -22,8 +22,8 @@ export default class HowToPlay extends React.Component {
                     <h1>How to play</h1>
                 </div>
                 <div className="wrapper">
-                    <h2>Stream this window</h2>
-                    <p>To give the full experience to the participants, you have to stream this window so everyone can see the results breakdown, leaderboard and all other information that would not be shown to them.</p>
+                    <h2>How it works</h2>
+                    <p>Stream trivia works by showing questions, results and leaderboard on stream. The participants will be able to join games, answer questions and keep track on their progress in an overlay that will apper on top of the stream. In order to acheive the best experience, stream this window in fullscreen and all the element should fall into place.</p>
 
                     <h2>Answer quickly for more points</h2>
                     <p>The faster you answer questions, the more points you get. You get 500 points for getting the right answer and you up to 500 additional points for speed.</p>
