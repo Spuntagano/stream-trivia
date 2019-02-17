@@ -194,6 +194,10 @@ export default class VideoComponent extends React.Component {
     }
 
     async transactionComplete(transaction: Transaction) {
+        if (this.authentication.getUserId() !== transaction.userId) {
+            return;
+        }
+
         try {
             await this.authentication.makeCall(`${this.configs.relayURL}/join`, 'POST', {
                 transaction: transaction

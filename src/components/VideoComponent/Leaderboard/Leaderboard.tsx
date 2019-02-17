@@ -40,7 +40,11 @@ export default class Leaderboard extends React.Component {
         let position = this.getPosition();
 
         return (
-            <div />
+            <div className="leaderboard">
+                <h6>{participants[userId].score} points</h6>
+                {currentQuestion+1 < numberQuestions && <h6>You are {position}{this.ordinal(position)} out of {Object.keys(participants).length}</h6>}
+                {currentQuestion+1 >= numberQuestions && <h6>You finished {position}{this.ordinal(position)} out of {Object.keys(participants).length}</h6>}
+            </div>
         )
     }
 }

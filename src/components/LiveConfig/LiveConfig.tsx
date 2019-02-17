@@ -358,11 +358,9 @@ export default class LiveConfig extends React.Component {
         });
     }
 
-    async leaderboard() {
-        this.setState(() => {
-            return {
-                gameState: 'leaderboard',
-            }
+    leaderboard() {
+        this.changeState({
+            gameState: 'leaderboard'
         });
     }
 
