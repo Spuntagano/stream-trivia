@@ -179,8 +179,8 @@ export default class LiveConfig extends React.Component {
                 }
             });
 
-            this.twitch.onError(() => {
-                this.toast.show({html: '<i class="material-icons">error_outline</i>An error has occurred :(', classes: 'error'});
+            this.twitch.onError((e: any) => {
+                console.error(e);
             });
         }
 
