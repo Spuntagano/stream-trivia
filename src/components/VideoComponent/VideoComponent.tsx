@@ -165,11 +165,16 @@ export default class VideoComponent extends React.Component {
 
                         if (json.participants) {
                             this.setState((prevState: State) => {
+                                let newParticipants = {
+                                    ...prevState.participants,
+                                    ...json.participants
+                                };
+
+                                newParticipants[this.authentication.getUserId()] = prevState.participants[this.authentication.getUserId()];
+                                newParticipants[this.authentication.getUserId()].score = json.participants[this.authentication.getUserId()].score;
+
                                 return {
-                                    participants: {
-                                        ...prevState.participants,
-                                        ...json.participants
-                                    }
+                                    participants: newParticipants
                                 }
                             });
                         }

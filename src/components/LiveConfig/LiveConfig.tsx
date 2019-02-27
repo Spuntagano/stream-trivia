@@ -536,18 +536,29 @@ export default class LiveConfig extends React.Component {
                 this.twitch.send('broadcast', 'application/json', {state: newState});
 
                 if (participants) {
-                    let p: Participants = {};
+                    let p: any = {};
+                    let pp: any = {};
                     Object.keys(participants).forEach((key) => {
-                        p[key] = participants[key];
-                        if (Object.keys(p).length > 40) {
-                            this.authentication.makeCall(`${this.configs.relayURL}/state`, 'POST', {participants: p});
+                        p[key] = {};
+                        p[key].score = participants[key].score;
+                        pp[key] = participants[key];
+                        if (JSON.stringify({participants: p}).length > 5120) {
+                            delete p[key];
+                            delete pp[key];
+
+                            this.authentication.makeCall(`${this.configs.relayURL}/state`, 'POST', {participants: pp});
                             this.twitch.send('broadcast', 'application/json', {participants: p});
 
                             p = {};
+                            pp = {};
+
+                            p[key] = {};
+                            p[key].score = participants[key].score;
+                            pp[key] = participants[key];
                         }
                     });
 
-                    this.authentication.makeCall(`${this.configs.relayURL}/state`, 'POST', {participants: p});
+                    this.authentication.makeCall(`${this.configs.relayURL}/state`, 'POST', {participants: pp});
                     this.twitch.send('broadcast', 'application/json', {participants: p});
                 }
             } catch (e) {
