@@ -289,7 +289,7 @@ export default class VideoComponent extends React.Component {
             this.setState((prevState: State) => {
                 let newParticipants = Object.assign({}, prevState.participants);
                 newParticipants[this.authentication.getUserId()].answer = answer;
-                newParticipants[this.authentication.getUserId()].answer = new Date().getTime();
+                newParticipants[this.authentication.getUserId()].answerTimestamp = new Date().getTime();
 
                 return newParticipants;
             });

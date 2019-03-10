@@ -1,7 +1,7 @@
 const configs:any = {
     testing: {
-        relayURL: 'https://docker.dev:3002',
-        wsURL: 'wss://docker.dev:3004',
+        relayURL: 'https://localhost:3002',
+        wsURL: 'wss://localhost:3004',
         cdnURL: ''
     },
     hosted_test: {
